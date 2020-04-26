@@ -46,8 +46,8 @@ app.get("/resources/cms",function(req,res){
     res.render("cms");
 });
 
-//Route to CMS Status
-app.get("/resources/cms/status",function(req,res){
+//Route to CMS OverView
+app.get("/resources/cms/overview",function(req,res){
 
     request('https://10.106.102.205:446/api/v1/system/status', function (error, response, body) {
     
@@ -60,7 +60,6 @@ app.get("/resources/cms/status",function(req,res){
         parseString(xml, function (err, result) {
             httpdetails.body=JSON.stringify(result);
             httpdetails.body=JSON.parse(httpdetails.body)
-            console.log(httpdetails.body)
             
         });
 
@@ -69,13 +68,34 @@ app.get("/resources/cms/status",function(req,res){
             username: 'cmsadmin',
             password: 'c1sc0SS+987'
             }).then(() => ssh.exec('hostname').then(function(result){
-            console.log('STDOUT: ' + result);
             sshdetails.hostname= result;
-            res.render('cmsstatus', {httpdetails:httpdetails,sshdetails:sshdetails});
+            res.render('cmsoverview', {httpdetails:httpdetails,sshdetails:sshdetails});
             }))
 
     }).auth('cmsadmin','c1sc0SS+987');
 });
+
+
+//Route to CMS Alarms and Status
+app.get("/resources/cms/status",function(req,res){
+
+    request('https://10.106.102.205:446/api/v1/system/alarms', function (error, response, body) {
+    
+        console.error('error:', error); // Print the error if one occurred
+        httpdetails.error = error;
+        httpdetails.statusCode = response && response.statusCode;
+        httpdetails.body = body;
+
+        xml = httpdetails.body;
+        parseString(xml, function (err, result) {
+            httpdetails.body=JSON.stringify(result);
+            httpdetails.xml=JSON.stringify(result);
+            httpdetails.body=JSON.parse(httpdetails.body);
+            res.render('cmsstatus', {httpdetails:httpdetails});      
+        });
+    }).auth('cmsadmin','c1sc0SS+987');
+});
+
 
 //Route to CMS ssh
 /*app.get("/resources/cms/ssh",function(req,res){
