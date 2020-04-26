@@ -24,9 +24,9 @@ ssh = new node_ssh();
 
 /* All Routes */
 
-var bodydetail;
-var statusCode;
-var versiondet;
+var httpdetails=[];
+var sshdetails=[];
+
 
 //Index Route
 app.get("/resources",function(req,res){
@@ -51,10 +51,10 @@ app.get("/resources/cms/activecalls",function(req,res){
         console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
         console.log('body:', body); // Print the HTML for the Google homepage.
 
-        var errors = error;
-        statusCode = response && response.statusCode;
-        bodydetail = body;
-        res.render('cmsactivecalls', {body:bodydetail, status:statusCode});
+        httpdetails.error = error;
+        httpdetails.statusCode = response && response.statusCode;
+        httpdetails.body = body;
+        res.render('cmsactivecalls', {httpdetails:httpdetails});
 
     }).auth('cmsadmin','c1sc0SS+987');
 });
@@ -69,11 +69,9 @@ app.get("/resources/cms/ssh",function(req,res){
         password: 'c1sc0SS+987'
       }).then(() => ssh.exec('version').then(function(result){
         console.log('STDOUT: ' + result);
-        versiondet= result;
-        res.render("cmsssh", {version:versiondet});
+        sshdetails.result= result;
+        res.render("cmsssh", {sshdetails:sshdetails});
       }))
-    
-    
 
 });
 
