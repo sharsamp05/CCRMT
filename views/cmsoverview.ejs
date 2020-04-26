@@ -1,0 +1,78 @@
+<%- include ("partials/header") %>
+
+<div>
+    <h1>
+        Cisco Meeting Server
+    </h1>
+</div>
+<!--Manipulating some data-->
+<% uptime = httpdetails.body.status.uptimeSeconds/3600 %>
+<% uptime = uptime.toFixed(3) %>
+
+<% if(httpdetails.body.status.clusterEnabled){ %>
+    <% httpdetails.body.status.clusterEnabled="Enabled"; %>
+<% } else{ %>
+    <% httpdetails.body.status.clusterEnabled="Disabled"; %>
+<% } %>
+<!--Manipulating some data-->
+
+<div style="padding: 20px 0px 0px 10px;">
+
+    <div class="panel panel--loose panel--raised base-margin-bottom">
+        <h2 class="subtitle">Overview</h2>
+        <hr>
+        <div class="section">
+            <div class="responsive-table">
+                <table class="table table--lined table--selectable">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>HostName</td>
+                            <td><%= sshdetails.hostname %></td>
+                        </tr>
+                        <tr>
+                            <td>Server Id</td>
+                            <td><%= httpdetails.body.status.hostId %></td>
+                        </tr>
+                        <tr>
+                            <td>Version</td>
+                            <td><%= httpdetails.body.status.softwareVersion %></td>
+                        </tr>
+                        <tr>
+                            <td>Callbridge Licensed</td>
+                            <td><%= httpdetails.body.status.activated %></td>
+                        </tr>
+                        <tr>
+                            <td>Uptime</td>
+                            <td><%= uptime %> Hr</td>
+                        </tr>
+                        <tr>
+                            <td>Call Bridge Cluster</td>
+                            <td><%= httpdetails.body.status.clusterEnabled %></td>
+                        </tr>
+                        <tr>
+                            <td>Active Calls</td>
+                            <td><%= httpdetails.body.status.callLegsActive %></td>
+                        </tr>
+                        <tr>
+                            <td>Maximum Simultaneous Calls</td>
+                            <td><%= httpdetails.body.status.callLegsMaxActive %></td>
+                        </tr>
+                        <tr>
+                            <td>Calls Taken by the Server</td>
+                            <td><%= httpdetails.body.status.callLegsCompleted %></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<%- include ('partials/footernotification') %>
