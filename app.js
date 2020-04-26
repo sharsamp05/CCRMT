@@ -11,12 +11,15 @@ app.set("view engine","ejs");
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 const request = require('request');
 
+var parseString = require('xml2js').parseString;
+var xml;
+
 //Initializing body parser
 //var bodyParser = require("body-parser");
 //app.use(bodyParser.urlencoded({extended:true}));
 
 //Requireing node-ssh
-var path, node_ssh, ssh, fs
+var node_ssh, ssh
 
 node_ssh = require('node-ssh');
 ssh = new node_ssh();
@@ -43,38 +46,51 @@ app.get("/resources/cms",function(req,res){
     res.render("cms");
 });
 
-//Route to CMS Active Calls
-app.get("/resources/cms/activecalls",function(req,res){
+//Route to CMS Status
+app.get("/resources/cms/status",function(req,res){
 
     request('https://10.106.102.205:446/api/v1/system/status', function (error, response, body) {
+    
         console.error('error:', error); // Print the error if one occurred
-        console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-        console.log('body:', body); // Print the HTML for the Google homepage.
-
         httpdetails.error = error;
         httpdetails.statusCode = response && response.statusCode;
         httpdetails.body = body;
-        res.render('cmsactivecalls', {httpdetails:httpdetails});
+
+        xml = httpdetails.body;
+        parseString(xml, function (err, result) {
+            httpdetails.body=JSON.stringify(result);
+            httpdetails.body=JSON.parse(httpdetails.body)
+            console.log(httpdetails.body)
+            
+        });
+
+        ssh.connect({
+            host: '10.106.102.205',
+            username: 'cmsadmin',
+            password: 'c1sc0SS+987'
+            }).then(() => ssh.exec('hostname').then(function(result){
+            console.log('STDOUT: ' + result);
+            sshdetails.hostname= result;
+            res.render('cmsstatus', {httpdetails:httpdetails,sshdetails:sshdetails});
+            }))
 
     }).auth('cmsadmin','c1sc0SS+987');
 });
 
-
 //Route to CMS ssh
-app.get("/resources/cms/ssh",function(req,res){
+/*app.get("/resources/cms/ssh",function(req,res){
 
     ssh.connect({
-        host: '10.106.102.205',
-        username: 'cmsadmin',
-        password: 'c1sc0SS+987'
-      }).then(() => ssh.exec('version').then(function(result){
-        console.log('STDOUT: ' + result);
-        sshdetails.result= result;
-        res.render("cmsssh", {sshdetails:sshdetails});
-      }))
-
-});
-
+    host: '10.106.102.205',
+    username: 'cmsadmin',
+    password: 'c1sc0SS+987'
+    }).then(() => ssh.exec('version').then(function(result){
+    console.log('STDOUT: ' + result);
+    sshdetails.result= result;
+    res.render("cmsssh", {sshdetails:sshdetails});
+    }))
+    
+});*/
 
 // / route sending to /resource
 app.get("/",function(req,res){
