@@ -89,12 +89,36 @@ app.get("/resources/cms/status",function(req,res){
         xml = httpdetails.body;
         parseString(xml, function (err, result) {
             httpdetails.body=JSON.stringify(result);
-            httpdetails.xml=JSON.stringify(result);
+            console.log(httpdetails.body);
             httpdetails.body=JSON.parse(httpdetails.body);
             res.render('cmsstatus', {httpdetails:httpdetails});      
         });
     }).auth('cmsadmin','c1sc0SS+987');
 });
+
+
+//Route to CMS Calls
+app.get("/resources/cms/calls",function(req,res){
+
+    request('https://10.106.102.205:446/api/v1/calls?', function (error, response, body) {
+    
+        console.error('error:', error); // Print the error if one occurred
+        httpdetails.error = error;
+        httpdetails.statusCode = response && response.statusCode;
+        httpdetails.body = body;
+
+        xml = httpdetails.body;
+        parseString(xml, function (err, result) {
+            httpdetails.body=JSON.stringify(result);
+            console.log(httpdetails.body);
+            httpdetails.body=JSON.parse(httpdetails.body);
+            //console.log(httpdetails.body);
+            res.render('cmscalls', {httpdetails:httpdetails});      
+        });
+    }).auth('cmsadmin','c1sc0SS+987');
+});
+
+
 
 
 //Route to CMS ssh
