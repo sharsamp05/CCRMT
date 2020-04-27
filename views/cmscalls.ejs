@@ -11,7 +11,7 @@
 <div style="padding: 20px 0px 0px 10px;">
 
     <div class="panel panel--loose panel--raised base-margin-bottom">
-        <h2 class="subtitle">Alarms and Status</h2>
+        <h2 class="subtitle">All Calls</h2>
         <hr>
         <div class="section">
             <div class="responsive-table">
@@ -24,16 +24,24 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Total Number of Alarms</td>
-                            <td><%= httpdetails.body.alarms.$.total %></td>
+                            <td>Total Number of Calls</td>
+                            <td><%= httpdetails.body.calls.$.total %></td>
                         </tr>
                         <tr>
-                            <td>Alarm 1</td>
-                            <td><%= httpdetails.body.alarms.alarm[0].type[0] %></td>
+                            <td>Call 1 ID</td>
+                            <td><%= httpdetails.body.calls.call[0].$.id %></td>
                         </tr>
                         <tr>
-                            <td>Alarm 2</td>
-                            <td><%= httpdetails.body.alarms.alarm[1].type[0] %></td>
+                            <td>Call 1 Name</td>
+                            <td><%= httpdetails.body.calls.call[0].name[0] %></td>
+                        </tr>
+                        <tr>
+                            <td>Call 1 Cospace ID</td>
+                            <td><%= httpdetails.body.calls.call[0].coSpace[0] %></td>
+                        </tr>
+                        <tr>
+                            <td>Call 1 Call Correlator ID</td>
+                            <td><%= httpdetails.body.calls.call[0].callCorrelator[0] %></td>
                         </tr>
                     </tbody>
                 </table>
