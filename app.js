@@ -57,10 +57,11 @@ app.get("/resources/cms/overview",function(req,res){
         httpdetails.body = body;
 
         xml = httpdetails.body;
+        console.log(xml);
         parseString(xml, function (err, result) {
             httpdetails.body=JSON.stringify(result);
             httpdetails.body=JSON.parse(httpdetails.body)
-            
+            console.log(httpdetails.body);
         });
 
         ssh.connect({
@@ -118,7 +119,20 @@ app.get("/resources/cms/calls",function(req,res){
     }).auth('cmsadmin','c1sc0SS+987');
 });
 
+//Route to VCS Calls
+app.get("/resources/vcs/calls",function(req,res){
 
+    request('https://10.127.232.196/api/management/status/call/call/active/false', function (error, response, body) {
+    
+        console.error('error:', error); // Print the error if one occurred
+        httpdetails.error = error;
+        httpdetails.statusCode = response && response.statusCode;
+        httpdetails.body = body;
+        xml = httpdetails.body;
+        httpdetails.body = JSON.parse(xml);
+        res.render('vcs_calls', {httpdetails:httpdetails}); 
+    }).auth('admin','Csco@048');
+});
 
 
 //Route to CMS ssh
