@@ -7,6 +7,8 @@
 </div>
 <!--Manipulating some data-->
 <% var alarmcount = httpdetails.body.alarms.$.total %>
+<% var clusterenabled = dbdetails.body.database.$.clustered %>
+<% var clusternodecount = dbdetails.body.database.cluster[0].$.totalNodes %>
 <!--Manipulating some data-->
 
 <div style="padding: 20px 0px 0px 10px;">
@@ -43,7 +45,70 @@
                             <% } %>
                         <% } %>
                     </tbody>
-                </table>
+                </table><br>
+                
+                <table class="table table--lined table--selectable">
+                    <thead>
+                        <th>Database Clustered</th>
+                        <th> 
+                            <% if(clusterenabled=='enabled') {  %>
+                                       True
+                            <% } else { %>
+                                False
+                            <% } %> 
+                        </th>
+                    </thead>
+                </table> <br>
+
+                <% if(clusterenabled=='enabled') {  %>
+                    <table class="table table--lined table--selectable">
+                        <thead>
+                            <tr>
+                                <th>No of Clustered Nodes</th>
+                                <th>Current Node</th>
+                                <th>Errors</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td> <%= dbdetails.body.database.cluster[0].$.totalNodes %> </td>
+                                <td> <%= dbdetails.body.database.cluster[0].$.nodeInUse %> </td>
+                                <td> <%= dbdetails.body.database.cluster[0].$.error %> </td>
+                            </tr>
+                        </tbody>
+                    </table><br>
+                    <table class="table table--lined table--selectable">
+                        <thead>
+                            <th>Hostname</th>
+                            <th>Sync Status</th>
+                            <th>Master Database</th>
+                            <th>Server is up</th>
+                        </thead>
+                        <tbody>
+                            <% if(clusternodecount!=0){ %>
+                                <% for (var i=0; i < clusternodecount ; i++) { %>
+                                    <tr>
+                                        <td><%= dbdetails.body.database.cluster[0].node[i].$.hostname %></td>
+
+                                        <% var syncState=''; %>
+                                        <% var syncByteBehind = dbdetails.body.database.cluster[0].node[i].$.syncBehind; %>
+                                        <% if(dbdetails.body.database.cluster[0].node[i].$.syncBehind == 0){ %>
+                                                <% syncState = 'In Sync'; %>
+                                        <% } else if(dbdetails.body.database.cluster[0].node[i].$.syncBehind == -1) { %>
+                                                <% syncState = 'Unable to Calculate. Check in Server'; %>
+                                       <% } else { %>
+                                                <% syncState = 'Server is behind '+syncByteBehind+ ' Bytes. Not in Sync'; %>
+                                       <% } %> 
+                                        <td><%= syncState %></td>
+                                        <td><%= dbdetails.body.database.cluster[0].node[i].$.master %></td>
+                                        <td><%= dbdetails.body.database.cluster[0].node[i].$.up %></td>
+                                    </tr>
+                                <% } %>
+                            <% } %>
+                        </tbody>
+                    </table><br>
+                <% } %>
+
             </div>
         </div>
     </div>
