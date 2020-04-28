@@ -32,6 +32,7 @@ password='c1sc0SS+987';
 
 var httpdetails= [];
 var sshdetails=[];
+var dbdetails=[]
 
 //Index Route
 app.get("/resources",function(req,res){
@@ -82,7 +83,10 @@ app.get("/resources/cms/overview",function(req,res){
 
 //Route to CMS Alarms and Status
 app.get("/resources/cms/status",function(req,res) {
-    
+
+    username1='admin';
+    password1='Csco@048';
+
     url = ['https://' + username + ':' + password + '@10.106.102.205:446/api/v1/system/alarms',
             'https://' + username + ':' + password + '@10.106.102.205:446/api/v1/system/database'];
         
@@ -90,15 +94,34 @@ app.get("/resources/cms/status",function(req,res) {
     
             console.error('error:', error); // Print the error if one occurred
             httpdetails.error = error;
+            httpdetails.statusCode = response && response.statusCode;
             httpdetails.body = body;
 
             xml = httpdetails.body;
             parseString(xml, function (err, result) {
                 httpdetails.body=JSON.stringify(result);
-                httpdetails.body=JSON.parse(httpdetails.body);
-                res.render('cmsstatus', {httpdetails:httpdetails});      
+                console.log(httpdetails.body);
+                httpdetails.body=JSON.parse(httpdetails.body);    
             });
+            
         });
+        request(url[1], function (error, response, body) {
+
+            console.error('error:', error); // Print the error if one occurred
+            dbdetails.error = error;
+            dbdetails.statusCode = response && response.statusCode;
+            dbdetails.body = body;
+
+            xml = dbdetails.body;
+            parseString(xml, function (err, result) {
+                dbdetails.body=JSON.stringify(result);
+                console.log(dbdetails.body);
+                dbdetails.body=JSON.parse(dbdetails.body);
+                res.render('cmsstatus', {httpdetails:httpdetails,dbdetails:dbdetails });  
+            });
+            
+        });
+    
 });
 
 
