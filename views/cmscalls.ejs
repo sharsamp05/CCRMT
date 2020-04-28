@@ -6,6 +6,7 @@
     </h1>
 </div>
 <!--Manipulating some data-->
+<% var calls = httpdetails.body.calls.$.total %>
 <!--Manipulating some data-->
 
 <div style="padding: 20px 0px 0px 10px;">
@@ -27,24 +28,32 @@
                             <td>Total Number of Calls</td>
                             <td><%= httpdetails.body.calls.$.total %></td>
                         </tr>
+                    </tbody>    
+                </table><br>
+                <table class="table table--lined table--selectable">
+                    <thead>
                         <tr>
-                            <td>Call 1 ID</td>
-                            <td><%= httpdetails.body.calls.call[0].$.id %></td>
+                            <th>Call ID</th>
+                            <th>Meeting Name</th>
+                            <th>CoSpace ID</th>
+                            <th>Correlator ID</th>
                         </tr>
-                        <tr>
-                            <td>Call 1 Name</td>
-                            <td><%= httpdetails.body.calls.call[0].name[0] %></td>
-                        </tr>
-                        <tr>
-                            <td>Call 1 Cospace ID</td>
-                            <td><%= httpdetails.body.calls.call[0].coSpace[0] %></td>
-                        </tr>
-                        <tr>
-                            <td>Call 1 Call Correlator ID</td>
-                            <td><%= httpdetails.body.calls.call[0].callCorrelator[0] %></td>
-                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if(calls!=0){ %>
+                            
+                            <% for (var i=0; i < calls ; i++) { %>
+
+                                        <tr>
+                                            <td> <%= httpdetails.body.calls.call[i].$.id %></td>
+                                            <td> <%= httpdetails.body.calls.call[i].name[0] %> </td>
+                                            <td> <%= httpdetails.body.calls.call[i].coSpace[0] %> </td>
+                                            <td> <%= httpdetails.body.calls.call[i].callCorrelator[0] %> </td>
+                                        </tr>
+                            <% } %>
+                       <% } %>
                     </tbody>
-                </table>
+                </table><br>
             </div>
         </div>
     </div>

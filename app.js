@@ -89,7 +89,6 @@ app.get("/resources/cms/status",function(req,res){
         xml = httpdetails.body;
         parseString(xml, function (err, result) {
             httpdetails.body=JSON.stringify(result);
-            console.log(httpdetails.body);
             httpdetails.body=JSON.parse(httpdetails.body);
             res.render('cmsstatus', {httpdetails:httpdetails});      
         });
@@ -110,9 +109,7 @@ app.get("/resources/cms/calls",function(req,res){
         xml = httpdetails.body;
         parseString(xml, function (err, result) {
             httpdetails.body=JSON.stringify(result);
-            console.log(httpdetails.body);
             httpdetails.body=JSON.parse(httpdetails.body);
-            //console.log(httpdetails.body);
             res.render('cmscalls', {httpdetails:httpdetails});      
         });
     }).auth('cmsadmin','c1sc0SS+987');
