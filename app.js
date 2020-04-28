@@ -27,9 +27,11 @@ ssh = new node_ssh();
 
 /* All Routes */
 
-var httpdetails=[];
-var sshdetails=[];
+username='cmsadmin';
+password='c1sc0SS+987'; 
 
+var httpdetails= [];
+var sshdetails=[];
 
 //Index Route
 app.get("/resources",function(req,res){
@@ -49,7 +51,9 @@ app.get("/resources/cms",function(req,res){
 //Route to CMS OverView
 app.get("/resources/cms/overview",function(req,res){
 
-    request('https://10.106.102.205:446/api/v1/system/status', function (error, response, body) {
+    url = ['https://' + username + ':' + password + '@10.106.102.205:446/api/v1/system/status'];
+
+    request(url[0], function (error, response, body) {
     
         console.error('error:', error); // Print the error if one occurred
         httpdetails.error = error;
@@ -72,27 +76,29 @@ app.get("/resources/cms/overview",function(req,res){
             res.render('cmsoverview', {httpdetails:httpdetails,sshdetails:sshdetails});
             }))
 
-    }).auth('cmsadmin','c1sc0SS+987');
+    });
 });
 
 
 //Route to CMS Alarms and Status
-app.get("/resources/cms/status",function(req,res){
-
-    request('https://10.106.102.205:446/api/v1/system/alarms', function (error, response, body) {
+app.get("/resources/cms/status",function(req,res) {
     
-        console.error('error:', error); // Print the error if one occurred
-        httpdetails.error = error;
-        httpdetails.statusCode = response && response.statusCode;
-        httpdetails.body = body;
+    url = ['https://' + username + ':' + password + '@10.106.102.205:446/api/v1/system/alarms',
+            'https://' + username + ':' + password + '@10.106.102.205:446/api/v1/system/database'];
+        
+        request(url[0], function (error, response, body) {
+    
+            console.error('error:', error); // Print the error if one occurred
+            httpdetails.error = error;
+            httpdetails.body = body;
 
-        xml = httpdetails.body;
-        parseString(xml, function (err, result) {
-            httpdetails.body=JSON.stringify(result);
-            httpdetails.body=JSON.parse(httpdetails.body);
-            res.render('cmsstatus', {httpdetails:httpdetails});      
+            xml = httpdetails.body;
+            parseString(xml, function (err, result) {
+                httpdetails.body=JSON.stringify(result);
+                httpdetails.body=JSON.parse(httpdetails.body);
+                res.render('cmsstatus', {httpdetails:httpdetails});      
+            });
         });
-    }).auth('cmsadmin','c1sc0SS+987');
 });
 
 
