@@ -53,35 +53,8 @@ app.get("/resources/cms",function(req,res){
 
 //Route to CMS OverView
 app.get("/resources/cms/overview",function(req,res){
-
-    url = ['https://' + username + ':' + password + '@10.106.102.205:446/api/v1/system/status'];
-
-    request(url[0], function (error, response, body) {
-    
-        console.error('error:', error); // Print the error if one occurred
-        httpdetails.error = error;
-        httpdetails.statusCode = response && response.statusCode;
-        httpdetails.body = body;
-
-        xml = httpdetails.body;
-        parseString(xml, function (err, result) {
-            httpdetails.body=JSON.stringify(result);
-            httpdetails.body=JSON.parse(httpdetails.body)
-            
-        });
-
-        ssh.connect({
-            host: '10.106.102.205',
-            username: 'cmsadmin',
-            password: 'c1sc0SS+987'
-            }).then(() => ssh.exec('hostname').then(function(result){
-            sshdetails.hostname= result;
-            res.render('cmsoverview', {httpdetails:httpdetails,sshdetails:sshdetails});
-            }))
-
-    });
+    fetchCmsOverview(res);
 });
-
 
 //Route to CMS Alarms and Status
 app.get("/resources/cms/status",function(req,res) {
@@ -94,24 +67,6 @@ app.get("/resources/cms/calls",function(req,res){
     fetchAllCalls(res);
 });
 
-
-
-
-//Route to CMS ssh
-/*app.get("/resources/cms/ssh",function(req,res){
-
-    ssh.connect({
-    host: '10.106.102.205',
-    username: 'cmsadmin',
-    password: 'c1sc0SS+987'
-    }).then(() => ssh.exec('version').then(function(result){
-    console.log('STDOUT: ' + result);
-    sshdetails.result= result;
-    res.render("cmsssh", {sshdetails:sshdetails});
-    }))
-    
-});*/
-
 // / route sending to /resource
 app.get("/",function(req,res){
     res.redirect("/resources")
@@ -122,6 +77,11 @@ app.listen(3000, function(){
 });
 
 
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
 //Function Definitions:
 
@@ -175,7 +135,7 @@ async function fetchAlarmAndStatus(res){
 };
 
 
-async function fetchAllCalls(res){
+function fetchAllCalls(res){
     url = 'https://' + username + ':' + password + '@10.106.102.205:446/api/v1/calls?';
     request(url, function (error, response, body) {    
         console.error('error:', error); // Print the error if one occurred
@@ -191,3 +151,43 @@ async function fetchAllCalls(res){
         });
     });    
 };
+
+function cmsOverviewApi(){
+    return new Promise(function(resolve, reject) {
+        request(url[0], function (error, response, body) {
+        
+            console.error('error:', error); // Print the error if one occurred
+            httpdetails.error = error;
+            httpdetails.statusCode = response && response.statusCode;
+            httpdetails.body = body;
+
+            xml = httpdetails.body;
+            parseString(xml, function (err, result) {
+                httpdetails.body=JSON.stringify(result);
+                httpdetails.body=JSON.parse(httpdetails.body);
+                resolve(httpdetails);
+            });
+        });
+    });
+};
+
+function cmsVersionSsh(){
+    return new Promise(function(resolve, reject) {
+        ssh.connect({
+            host: '10.106.102.205',
+            username: 'cmsadmin',
+            password: 'c1sc0SS+987'
+            }).then(() => ssh.exec('hostname').then(function(result){
+            sshdetails.hostname= result;
+            resolve(sshdetails);
+        }));
+    });
+};
+
+async function fetchCmsOverview(res){
+
+    url =['https://' + username + ':' + password + '@10.106.102.205:446/api/v1/system/status'];
+    await cmsOverviewApi();
+    await cmsVersionSsh();
+    res.render('cmsoverview', {httpdetails:httpdetails,sshdetails:sshdetails});
+}
