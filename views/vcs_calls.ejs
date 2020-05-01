@@ -1,0 +1,36 @@
+<%- include ("partials/header") %>
+<style>
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 15px;
+    }
+</style>
+<div>
+    <h1>
+        Cisco VCS
+    </h1>
+</div>
+<p>
+    <%= httpdetails.body[0]['records'][0]['uuid'] %>
+    <br>
+    <%= httpdetails.body[0]['records'][0]['source_alias'] %>
+</p>
+
+<table style="width:100%">
+    <tr>
+      <th>UUID</th>
+      <th>Source_alias</th> 
+      <th>Destination_alias</th>
+    </tr>
+    <tr>
+      <td>Jill</td>
+      <td>Smith</td>
+      <td>50</td>
+    </tr>
+  </table>
+
+          
+<%- include ('partials/footernotification') %>
